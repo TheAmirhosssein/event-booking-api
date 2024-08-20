@@ -5,10 +5,13 @@ import (
 
 	"github.com/TheAmirhosssein/event-booking-api/models"
 	"github.com/gin-gonic/gin"
+	"github.com/TheAmirhosssein/event-booking-api/db"
+	
 )
 
 func main() {
 	server := gin.Default()
+	db.InitDB()
 	server.GET("/events", eventsHandler)
 	server.POST("/events", createEvent)
 	server.Run(":8080")
