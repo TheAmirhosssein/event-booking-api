@@ -16,16 +16,16 @@ func AuthenticateMiddleware(context *gin.Context) {
 		return
 	}
 	if len(strings.Split(token, " ")) != 2 {
-		context.JSON(http.StatusUnauthorized, gin.H{"message": "invalid token"})
+		context.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "invalid token"})
 		context.Abort()
 		return
 	}
 	token = strings.Split(token, " ")[1]
-	_, err := utils.ValidateToken(token)
+	claims, err := utils.ValidateToken(token)
 	if err != nil {
-		context.JSON(http.StatusUnauthorized, gin.H{"message": "invalid token"})
-		context.Abort()
+		context.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "invalid token"})
 		return
 	}
+	context.Set("user", claims)
 	context.Next()
 }
