@@ -3,10 +3,9 @@ package main
 import (
 	"net/http"
 
+	"github.com/TheAmirhosssein/event-booking-api/db"
 	"github.com/TheAmirhosssein/event-booking-api/models"
 	"github.com/gin-gonic/gin"
-	"github.com/TheAmirhosssein/event-booking-api/db"
-	
 )
 
 func main() {
@@ -14,7 +13,7 @@ func main() {
 	db.InitDB()
 	server.GET("/events", eventsHandler)
 	server.POST("/events", createEvent)
-	server.Run(":8080")
+	server.Run("127.0.0.1:8080")
 }
 
 func eventsHandler(context *gin.Context) {
@@ -29,6 +28,9 @@ func createEvent(context *gin.Context) {
 		return
 	}
 	incomingData.ID = 1
-	incomingData.Save()
+	err = incomingData.Save()
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+	}
 	context.JSON(200, incomingData)
 }
