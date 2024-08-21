@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"errors"
 	"os"
 	"time"
 
@@ -16,4 +17,23 @@ func GenerateAccessToken(userId int64, username string) (string, error) {
 
 	secretKey := os.Getenv("SECRET_KEY")
 	return token.SignedString([]byte(secretKey))
+}
+
+func ValidateToken(token string) (map[string]any, error) {
+	paredToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
+		_, ok := token.Method.(*jwt.SigningMethodHMAC)
+		if !ok {
+			return nil, errors.New("invalid type")
+		}
+		secretKey := os.Getenv("SECRET_KEY")
+		return []byte(secretKey), nil
+	})
+	if err != nil {
+		return nil, errors.New("invalid token")
+	}
+
+	if !paredToken.Valid {
+		return nil, errors.New("invalid token")
+	}
+	return paredToken.Claims.(jwt.MapClaims), nil
 }
