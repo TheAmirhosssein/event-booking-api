@@ -19,6 +19,8 @@ func eventsHandler(context *gin.Context) {
 
 func createEvent(context *gin.Context) {
 	var incomingData models.Event
+	userId := context.GetInt64("userId")
+	incomingData.UserID = &userId
 	err := context.BindJSON(&incomingData)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"message": "can not parse json"})

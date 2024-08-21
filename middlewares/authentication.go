@@ -26,6 +26,6 @@ func AuthenticateMiddleware(context *gin.Context) {
 		context.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "invalid token"})
 		return
 	}
-	context.Set("user", claims)
+	context.Set("userId", int64(claims["user_id"].(float64)))
 	context.Next()
 }
