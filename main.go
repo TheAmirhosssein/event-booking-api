@@ -17,7 +17,12 @@ func main() {
 }
 
 func eventsHandler(context *gin.Context) {
-	context.JSON(http.StatusOK, models.GetAllEvents())
+	events, err := models.GetAllEvents()
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+	context.JSON(http.StatusOK, events)
 }
 
 func createEvent(context *gin.Context) {
