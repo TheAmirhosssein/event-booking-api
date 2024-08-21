@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/TheAmirhosssein/event-booking-api/models"
+	"github.com/TheAmirhosssein/event-booking-api/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -38,5 +39,10 @@ func login(context *gin.Context) {
 		context.JSON(http.StatusUnauthorized, gin.H{"message": err.Error()})
 		return
 	}
-	context.JSON(http.StatusOK, gin.H{"message": "successful!"})
+	accessKey, err := utils.GenerateAccessToken(user.ID, user.Username)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{"access_key": accessKey})
 }
