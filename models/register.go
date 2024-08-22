@@ -17,3 +17,14 @@ func RegisterEvent(userId, eventId int64) error {
 	_, err = stmt.Exec(userId, eventId)
 	return err
 }
+
+func DeleteRegistration(userId, eventId int64) error {
+	query := `DELETE From registration where user_id = ? AND event_id = ?`
+	stmt, err := db.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec(userId, eventId)
+	return err
+}
