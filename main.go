@@ -10,5 +10,5 @@ func main() {
 	server := gin.Default()
 	db.InitDB()
 	routers.RegisterRouters(server)
-	server.Run("127.0.0.1:8080")
+	server.Run("0.0.0.0:8080")
 }
