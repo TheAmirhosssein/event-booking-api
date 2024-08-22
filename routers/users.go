@@ -24,7 +24,12 @@ func signUp(context *gin.Context) {
 		context.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
-	context.JSON(http.StatusCreated, user)
+	accessToken, err := utils.GenerateAccessToken(user.ID, user.Username)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+	}
+	response := gin.H{"username": user.Username, "access_token": accessToken}
+	context.JSON(http.StatusCreated, response)
 }
 
 func login(context *gin.Context) {
