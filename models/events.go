@@ -17,15 +17,15 @@ type Event struct {
 
 func (event *Event) Save() error {
 	sqlCommand := `
-	INSERT INTO events (name, description, location, dateTime)
-	VALUES (?, ?, ?, ?)
+	INSERT INTO events (name, description, location, dateTime, user_id)
+	VALUES (?, ?, ?, ?, ?)
 	`
 	stmt, err := db.DB.Prepare(sqlCommand)
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
-	result, err := stmt.Exec(event.Name, event.Description, event.Location, event.DateTime)
+	result, err := stmt.Exec(event.Name, event.Description, event.Location, event.DateTime, event.UserID)
 	if err != nil {
 		return err
 	}

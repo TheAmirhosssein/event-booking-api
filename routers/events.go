@@ -30,6 +30,7 @@ func createEvent(context *gin.Context) {
 	err = incomingData.Save()
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
 	}
 	context.JSON(201, incomingData)
 }
@@ -54,9 +55,14 @@ func updateEvent(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{"message": "invalid endpoint"})
 		return
 	}
-	_, err = models.GetEvent(id)
+	event, err := models.GetEvent(id)
 	if err != nil {
 		context.JSON(http.StatusNotFound, gin.H{"message": "event does not exist"})
+		return
+	}
+	userId := context.GetInt64("userId")
+	if *event.UserID != userId {
+		context.JSON(http.StatusForbidden, gin.H{"message": "you can not update this event"})
 		return
 	}
 	var updatedEvent models.Event
@@ -83,6 +89,11 @@ func deleteEvent(context *gin.Context) {
 	event, err := models.GetEvent(id)
 	if err != nil {
 		context.JSON(http.StatusNotFound, gin.H{"message": "event does not exist"})
+		return
+	}
+	userId := context.GetInt64("userId")
+	if *event.UserID != userId {
+		context.JSON(http.StatusForbidden, gin.H{"message": "you can not delete this event"})
 		return
 	}
 	err = event.Delete()
